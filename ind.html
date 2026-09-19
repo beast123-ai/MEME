@@ -1,0 +1,1714 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>VOID — Experience</title>
+
+
+    <style>
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background: #070707;
+
+            color: #ffffff;
+
+            overflow-x: hidden;
+        }
+
+
+        body.loading {
+            overflow: hidden;
+        }
+
+
+
+        /* =========================================================
+           BACKGROUND
+        ========================================================= */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            background:
+
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(255,255,255,.08),
+                    transparent 30%
+                ),
+
+                radial-gradient(
+                    circle at 80% 80%,
+                    rgba(120,80,255,.08),
+                    transparent 30%
+                );
+
+            pointer-events: none;
+
+            z-index: -2;
+        }
+
+
+
+        /* =========================================================
+           NOISE
+        ========================================================= */
+
+        .noise {
+
+            position: fixed;
+
+            inset: 0;
+
+            opacity: .035;
+
+            pointer-events: none;
+
+            z-index: 1000;
+
+            background-image:
+
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+        }
+
+
+
+        /* =========================================================
+           LOADING SCREEN
+        ========================================================= */
+
+        .loading-screen {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 2000;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+
+                radial-gradient(
+                    circle at center,
+                    #202020,
+                    #050505 65%
+                );
+
+            transition:
+                opacity .7s ease,
+                visibility .7s ease;
+        }
+
+
+        .loading-screen.hidden {
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            pointer-events: none;
+        }
+
+
+        .loading-content {
+
+            text-align: center;
+        }
+
+
+        .loading-label {
+
+            margin-bottom: 28px;
+
+            color: rgba(255,255,255,.45);
+
+            font-size: 12px;
+
+            letter-spacing: 5px;
+
+            text-transform: uppercase;
+        }
+
+
+        .start-btn {
+
+            min-width: 190px;
+
+            padding: 17px 28px;
+
+            border: 1px solid rgba(255,255,255,.7);
+
+            border-radius: 50px;
+
+            background: transparent;
+
+            color: white;
+
+            cursor: pointer;
+
+            font: inherit;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            letter-spacing: 3px;
+
+            transition:
+                background .25s ease,
+                color .25s ease,
+                transform .25s ease;
+        }
+
+
+        .start-btn:hover,
+        .start-btn:focus-visible {
+
+            background: white;
+
+            color: #050505;
+
+            transform: translateY(-3px);
+        }
+
+
+        .start-btn:focus-visible {
+
+            outline: 2px solid #00ff95;
+
+            outline-offset: 5px;
+        }
+
+
+
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+
+        .navbar {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+
+            height: 80px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 7vw;
+
+            z-index: 1100;
+
+            background: rgba(7,7,7,.65);
+
+            backdrop-filter: blur(18px);
+
+            -webkit-backdrop-filter: blur(18px);
+
+            border-bottom:
+                1px solid rgba(255,255,255,.08);
+
+            transition:
+                opacity .4s ease,
+                transform .4s ease;
+        }
+
+
+        .navbar.hidden {
+
+            opacity: 0;
+
+            transform: translateY(-100%);
+
+            pointer-events: none;
+        }
+
+
+        .logo {
+
+            font-size: 20px;
+
+            font-weight: 800;
+
+            letter-spacing: 4px;
+        }
+
+
+        .nav-links {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 35px;
+        }
+
+
+        .nav-links a {
+
+            color: rgba(255,255,255,.65);
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            transition: .25s ease;
+        }
+
+
+        .nav-links a:hover {
+
+            color: white;
+        }
+
+
+
+        /* =========================================================
+           MUSIC BUTTON
+        ========================================================= */
+
+        .music-btn {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            border:
+                1px solid rgba(255,255,255,.18);
+
+            background:
+                rgba(255,255,255,.06);
+
+            color: white;
+
+            padding: 11px 17px;
+
+            border-radius: 50px;
+
+            cursor: pointer;
+
+            font-weight: 700;
+
+            transition: .25s ease;
+        }
+
+
+        .music-btn:hover {
+
+            background: white;
+
+            color: black;
+
+            transform: translateY(-2px);
+        }
+
+
+        .music-icon {
+
+            width: 8px;
+
+            height: 8px;
+
+            border-radius: 50%;
+
+            background: #777;
+
+            transition: .25s ease;
+        }
+
+
+        .music-btn.active .music-icon {
+
+            background: #00ff95;
+
+            box-shadow:
+                0 0 10px #00ff95;
+        }
+
+
+
+        /* =========================================================
+           HERO
+        ========================================================= */
+
+        .hero {
+
+            position: relative;
+
+            isolation: isolate;
+
+            overflow: hidden;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 120px 20px;
+        }
+
+
+        .hero-video {
+
+            position: absolute;
+
+            inset: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+            z-index: -2;
+        }
+
+
+        .hero-overlay {
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+
+                linear-gradient(
+                    180deg,
+                    rgba(0,0,0,.62),
+                    rgba(0,0,0,.35) 45%,
+                    rgba(0,0,0,.78)
+                ),
+
+                radial-gradient(
+                    circle at center,
+                    transparent 20%,
+                    rgba(0,0,0,.45)
+                );
+
+            pointer-events: none;
+
+            z-index: -1;
+        }
+
+
+        .hero-content {
+
+            max-width: 900px;
+
+            position: relative;
+
+            z-index: 1;
+        }
+
+
+        .eyebrow {
+
+            font-size: 12px;
+
+            letter-spacing: 5px;
+
+            text-transform: uppercase;
+
+            color: rgba(255,255,255,.45);
+
+            margin-bottom: 25px;
+        }
+
+
+        .hero h1 {
+
+            font-size:
+                clamp(55px, 11vw, 150px);
+
+            line-height: .85;
+
+            letter-spacing: -7px;
+
+            font-weight: 900;
+        }
+
+
+        .hero h1 span {
+
+            color:
+                rgba(255,255,255,.28);
+        }
+
+
+        .hero-description {
+
+            max-width: 550px;
+
+            margin: 35px auto 0;
+
+            line-height: 1.7;
+
+            color:
+                rgba(255,255,255,.55);
+        }
+
+
+
+        /* =========================================================
+           SECTIONS
+        ========================================================= */
+
+        section {
+
+            min-height: 80vh;
+
+            padding:
+                120px 8vw;
+        }
+
+
+        .section-title {
+
+            font-size:
+                clamp(35px, 6vw, 70px);
+
+            letter-spacing: -3px;
+
+            margin-bottom: 50px;
+        }
+
+
+        .cards {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 20px;
+        }
+
+
+        .card {
+
+            min-height: 250px;
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            background:
+                rgba(255,255,255,.04);
+
+            border:
+                1px solid rgba(255,255,255,.08);
+
+            transition:
+                .3s ease;
+        }
+
+
+        .card:hover {
+
+            transform:
+                translateY(-8px);
+
+            background:
+                rgba(255,255,255,.07);
+        }
+
+
+        .card h3 {
+
+            margin-bottom: 15px;
+        }
+
+
+        .card p {
+
+            color:
+                rgba(255,255,255,.5);
+
+            line-height: 1.7;
+        }
+
+
+
+        /* =========================================================
+           IMMERSIVE MUSIC MODE
+        ========================================================= */
+
+        .music-mode {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 1500;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            background:
+
+                radial-gradient(
+                    circle at center,
+                    #202020,
+                    #050505 65%
+                );
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            transition:
+
+                opacity .6s ease,
+                visibility .6s ease;
+        }
+
+
+        .music-mode.active {
+
+            opacity: 1;
+
+            visibility: visible;
+        }
+
+
+        .music-content {
+
+            width: min(90vw, 700px);
+
+            padding: 30px;
+        }
+
+
+
+        /* =========================================================
+           VISUALIZER
+        ========================================================= */
+
+        .visualizer {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            height: 120px;
+
+            margin-bottom: 35px;
+        }
+
+
+        .bar {
+
+            width: 7px;
+
+            height: 30px;
+
+            border-radius: 10px;
+
+            background: white;
+
+            animation:
+                equalizer .7s ease-in-out infinite alternate;
+        }
+
+
+        .bar:nth-child(2) {
+            animation-delay: .1s;
+        }
+
+
+        .bar:nth-child(3) {
+            animation-delay: .2s;
+        }
+
+
+        .bar:nth-child(4) {
+            animation-delay: .3s;
+        }
+
+
+        .bar:nth-child(5) {
+            animation-delay: .4s;
+        }
+
+
+        .bar:nth-child(6) {
+            animation-delay: .2s;
+        }
+
+
+        .bar:nth-child(7) {
+            animation-delay: .1s;
+        }
+
+
+        @keyframes equalizer {
+
+            from {
+
+                height: 20px;
+
+                opacity: .35;
+            }
+
+            to {
+
+                height: 110px;
+
+                opacity: 1;
+            }
+        }
+
+
+        .music-mode h2 {
+
+            font-size:
+                clamp(45px, 9vw, 100px);
+
+            letter-spacing: -5px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .music-mode p {
+
+            color:
+                rgba(255,255,255,.5);
+
+            letter-spacing: 2px;
+        }
+
+
+        .timer {
+
+            margin-top: 35px;
+
+            font-size: 13px;
+
+            color:
+                rgba(255,255,255,.35);
+        }
+
+
+        .track-name {
+
+            margin-top: 15px;
+
+            font-size: 11px;
+
+            color: rgba(255,255,255,.25);
+
+            letter-spacing: 1px;
+        }
+
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+
+                height: 70px;
+
+                padding:
+                    0 20px;
+            }
+
+
+            .nav-links {
+
+                display: none;
+            }
+
+
+            .logo {
+
+                font-size: 17px;
+            }
+
+
+            .music-btn {
+
+                padding:
+                    10px 14px;
+            }
+
+
+            .hero h1 {
+
+                letter-spacing:
+                    -4px;
+            }
+
+
+            .cards {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            section {
+
+                padding:
+                    90px 20px;
+            }
+
+
+            .music-mode h2 {
+
+                letter-spacing:
+                    -3px;
+            }
+
+
+            .music-content {
+
+                padding:
+                    15px;
+            }
+        }
+
+
+
+        /* =========================================================
+           SMALL MOBILE
+        ========================================================= */
+
+        @media (max-width: 400px) {
+
+            .loading-label {
+
+                font-size: 10px;
+
+                letter-spacing: 3px;
+            }
+
+
+            .start-btn {
+
+                min-width: 170px;
+
+                padding:
+                    15px 22px;
+            }
+
+
+            .music-btn {
+
+                font-size:
+                    11px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+
+<body class="loading">
+
+
+    <!-- =========================================================
+         LOADING SCREEN
+    ========================================================= -->
+
+    <div
+        class="loading-screen"
+        id="loadingScreen">
+
+        <div class="loading-content">
+
+            <div class="loading-label">
+                VOID — EXPERIENCE
+            </div>
+
+            <button
+                class="start-btn"
+                id="startBtn"
+                type="button">
+
+                TAP TO START
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================================
+         NOISE
+    ========================================================= -->
+
+    <div class="noise"></div>
+
+
+
+    <!-- =========================================================
+         NAVBAR
+    ========================================================= -->
+
+    <nav
+        class="navbar"
+        id="navbar">
+
+        <div class="logo">
+            VOID
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="#home">
+                Home
+            </a>
+
+            <a href="#about">
+                About
+            </a>
+
+            <a href="#experience">
+                Experience
+            </a>
+
+        </div>
+
+
+        <button
+            class="music-btn"
+            id="musicBtn"
+            type="button">
+
+            <span class="music-icon"></span>
+
+            MUSIC
+
+        </button>
+
+    </nav>
+
+
+
+    <!-- =========================================================
+         MAIN
+    ========================================================= -->
+
+    <main>
+
+
+        <!-- =====================================================
+             HERO
+        ===================================================== -->
+
+        <section
+            class="hero"
+            id="home">
+
+
+            <video
+                class="hero-video"
+                id="heroVideo"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                aria-hidden="true">
+
+                <source
+                    src="./media/skull-matrix-moewalls-com.mp4"
+                    type="video/mp4">
+
+            </video>
+
+
+            <div class="hero-overlay"></div>
+
+
+            <div class="hero-content">
+
+                <div class="eyebrow">
+                    Welcome to the experience
+                </div>
+
+
+                <h1>
+
+                    ENTER
+                    <br>
+
+                    <span>
+                        THE VOID.
+                    </span>
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    A minimal digital experience designed
+                    around sound, motion and atmosphere.
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             ABOUT
+        ===================================================== -->
+
+        <section id="about">
+
+            <h2 class="section-title">
+
+                Something different.
+
+            </h2>
+
+
+            <div class="cards">
+
+
+                <div class="card">
+
+                    <h3>
+                        01 — Sound
+                    </h3>
+
+                    <p>
+
+                        Music becomes part of the interface,
+                        transforming the experience when activated.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="card">
+
+                    <h3>
+                        02 — Motion
+                    </h3>
+
+                    <p>
+
+                        Smooth transitions and subtle animations
+                        create a cinematic feeling.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="card">
+
+                    <h3>
+                        03 — Experience
+                    </h3>
+
+                    <p>
+
+                        The interface disappears when the
+                        immersive mode begins.
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             EXPERIENCE
+        ===================================================== -->
+
+        <section id="experience">
+
+            <h2 class="section-title">
+
+                Experience.
+
+            </h2>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- =========================================================
+         MUSIC MODE
+    ========================================================= -->
+
+    <div
+        class="music-mode"
+        id="musicMode">
+
+        <div class="music-content">
+
+
+            <div class="visualizer">
+
+                <span class="bar"></span>
+
+                <span class="bar"></span>
+
+                <span class="bar"></span>
+
+                <span class="bar"></span>
+
+                <span class="bar"></span>
+
+                <span class="bar"></span>
+
+                <span class="bar"></span>
+
+            </div>
+
+
+            <h2>
+                PRANK.
+            </h2>
+
+
+            <p>
+                YOU ACTIVATED THE VOID
+            </p>
+
+
+            <div class="timer">
+
+                Returning in
+                <span id="timer">10</span>s
+
+            </div>
+
+
+            <div
+                class="track-name"
+                id="trackName">
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================================
+         AUDIO
+    ========================================================= -->
+
+    <audio
+        id="music"
+        preload="auto">
+
+    </audio>
+
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================= -->
+
+    <script>
+
+
+        /* ========================================================
+           ELEMENTS
+        ======================================================== */
+
+        const musicBtn =
+            document.getElementById("musicBtn");
+
+
+        const music =
+            document.getElementById("music");
+
+
+        const navbar =
+            document.getElementById("navbar");
+
+
+        const musicMode =
+            document.getElementById("musicMode");
+
+
+        const timer =
+            document.getElementById("timer");
+
+
+        const trackName =
+            document.getElementById("trackName");
+
+
+        const loadingScreen =
+            document.getElementById("loadingScreen");
+
+
+        const startBtn =
+            document.getElementById("startBtn");
+
+
+        const heroVideo =
+            document.getElementById("heroVideo");
+
+
+
+        /* ========================================================
+           MUSIC FILES
+        ======================================================== */
+
+        const musicFiles = [
+
+            {
+                path: "./music/arkh.mp3",
+                name: "ARKH"
+            },
+
+            {
+                path: "./music/ive-got-this-faaaaaaaaahhhhh.mp3",
+                name: "IVE GOT THIS"
+            },
+
+            {
+                path: "./music/modi-ji-bhojyam.mp3",
+                name: "MODI JI BHOJYAM"
+            },
+
+            {
+                path: "./music/non-stop-gali-in-hindi-2.mp3",
+                name: "NON-STOP GALI IN HINDI"
+            }
+
+        ];
+
+
+
+        /* ========================================================
+           VARIABLES
+        ======================================================== */
+
+        let prankRunning = false;
+
+        let currentMusicIndex = -1;
+
+        let countdownInterval = null;
+
+
+
+        /* ========================================================
+           RANDOM MUSIC SELECTOR
+        ======================================================== */
+
+        function getRandomMusic() {
+
+            let randomIndex;
+
+            do {
+
+                randomIndex =
+                    Math.floor(
+                        Math.random() *
+                        musicFiles.length
+                    );
+
+            }
+
+            while (
+                musicFiles.length > 1 &&
+                randomIndex === currentMusicIndex
+            );
+
+
+            currentMusicIndex =
+                randomIndex;
+
+
+            return musicFiles[randomIndex];
+
+        }
+
+
+
+        /* ========================================================
+           PLAY RANDOM MUSIC
+        ======================================================== */
+
+        async function playRandomMusic() {
+
+            const selected =
+                getRandomMusic();
+
+
+            music.src =
+                selected.path;
+
+
+            music.volume =
+                1.0;
+
+
+            music.loop =
+                false;
+
+
+            trackName.textContent =
+                selected.name;
+
+
+            try {
+
+                music.load();
+
+                await music.play();
+
+                console.log(
+                    "Playing:",
+                    selected.path
+                );
+
+                return true;
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Audio could not start:",
+                    error
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+
+        /* ========================================================
+           START WEBSITE
+        ======================================================== */
+
+        heroVideo.pause();
+
+
+        startBtn.addEventListener(
+            "click",
+            async () => {
+
+
+                /* Prevent double clicks */
+
+                startBtn.disabled =
+                    true;
+
+
+
+                /* -----------------------------------------------
+                   START HERO VIDEO
+                ------------------------------------------------ */
+
+                try {
+
+                    await heroVideo.play();
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Hero video could not start:",
+                        error
+                    );
+
+                }
+
+
+
+                /* -----------------------------------------------
+                   START RANDOM MUSIC
+                ------------------------------------------------ */
+
+                await playRandomMusic();
+
+
+
+                /* -----------------------------------------------
+                   HIDE LOADING SCREEN
+                ------------------------------------------------ */
+
+                loadingScreen.classList.add(
+                    "hidden"
+                );
+
+
+                document.body.classList.remove(
+                    "loading"
+                );
+
+
+                loadingScreen.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+            }
+        );
+
+
+
+        /* ========================================================
+           MUSIC NAV BUTTON
+        ======================================================== */
+
+        musicBtn.addEventListener(
+            "click",
+            async () => {
+
+
+                /* Don't allow multiple prank sessions */
+
+                if (prankRunning) {
+
+                    return;
+
+                }
+
+
+                prankRunning =
+                    true;
+
+
+                /* -----------------------------------------------
+                   PLAY NEW RANDOM MUSIC
+                ------------------------------------------------ */
+
+                const audioStarted =
+                    await playRandomMusic();
+
+
+                if (!audioStarted) {
+
+                    prankRunning =
+                        false;
+
+                    return;
+
+                }
+
+
+                /* -----------------------------------------------
+                   MUSIC BUTTON ACTIVE
+                ------------------------------------------------ */
+
+                musicBtn.classList.add(
+                    "active"
+                );
+
+
+                /* -----------------------------------------------
+                   HIDE NAVBAR
+                ------------------------------------------------ */
+
+                navbar.classList.add(
+                    "hidden"
+                );
+
+
+                /* -----------------------------------------------
+                   SHOW IMMERSIVE MODE
+                ------------------------------------------------ */
+
+                musicMode.classList.add(
+                    "active"
+                );
+
+
+                /* -----------------------------------------------
+                   ADD HISTORY STATE
+                ------------------------------------------------ */
+
+                history.pushState(
+                    {
+                        musicMode: true
+                    },
+                    "",
+                    "#music"
+                );
+
+
+
+                /* -----------------------------------------------
+                   10 SECOND COUNTDOWN
+                ------------------------------------------------ */
+
+                let seconds =
+                    10;
+
+
+                timer.textContent =
+                    seconds;
+
+
+                countdownInterval =
+                    setInterval(
+                        () => {
+
+
+                            seconds--;
+
+
+                            timer.textContent =
+                                seconds;
+
+
+                            if (
+                                seconds <= 0
+                            ) {
+
+                                clearInterval(
+                                    countdownInterval
+                                );
+
+                                countdownInterval =
+                                    null;
+
+                                endPrank();
+
+                            }
+
+                        },
+                        1000
+                    );
+
+            }
+        );
+
+
+
+        /* ========================================================
+           END PRANK
+        ======================================================== */
+
+        function endPrank() {
+
+
+            /* Stop audio */
+
+            music.pause();
+
+            music.currentTime =
+                0;
+
+
+            /* Hide prank */
+
+            musicMode.classList.remove(
+                "active"
+            );
+
+
+            /* Show navbar */
+
+            navbar.classList.remove(
+                "hidden"
+            );
+
+
+            /* Reset button */
+
+            musicBtn.classList.remove(
+                "active"
+            );
+
+
+            /* Clear URL hash */
+
+            if (
+                location.hash === "#music"
+            ) {
+
+                history.replaceState(
+                    null,
+                    "",
+                    location.pathname +
+                    location.search
+                );
+
+            }
+
+
+            prankRunning =
+                false;
+
+        }
+
+
+
+        /* ========================================================
+           BACK BUTTON PROTECTION DURING PRANK
+        ======================================================== */
+
+        window.addEventListener(
+            "popstate",
+            () => {
+
+
+                if (
+                    prankRunning
+                ) {
+
+                    history.pushState(
+                        {
+                            musicMode: true
+                        },
+                        "",
+                        "#music"
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /* ========================================================
+           AUTO PLAY NEXT RANDOM TRACK
+        ======================================================== */
+
+        music.addEventListener(
+            "ended",
+            async () => {
+
+
+                /*
+                 * Once the current music ends,
+                 * automatically choose another track.
+                 */
+
+                if (
+                    !prankRunning
+                ) {
+
+                    /*
+                     * Website started music:
+                     * continue with another random track.
+                     */
+
+                    await playRandomMusic();
+
+                }
+
+                else {
+
+                    /*
+                     * During prank mode,
+                     * continue random music.
+                     */
+
+                    await playRandomMusic();
+
+                }
+
+            }
+        );
+
+
+    </script>
+
+</body>
+
+</html>
+```
