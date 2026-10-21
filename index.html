@@ -771,6 +771,84 @@
         }
 
 
+        .color-picker {
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 12px;
+
+            margin-top: 28px;
+        }
+
+
+        .color-choice {
+
+            width: 44px;
+
+            height: 44px;
+
+            border: 1px solid rgba(255,255,255,.2);
+
+            border-radius: 50%;
+
+            background: rgba(255,255,255,.08);
+
+            font-size: 23px;
+
+            cursor: pointer;
+
+            transition: .25s ease;
+        }
+
+
+        .color-choice:hover,
+        .color-choice:focus-visible {
+
+            transform: translateY(-4px) scale(1.08);
+
+            outline: none;
+        }
+
+
+        .color-choice.selected {
+
+            box-shadow:
+                0 0 0 3px rgba(255,255,255,.85),
+                0 0 24px var(--selected-color);
+        }
+
+
+        .music-mode[data-color="red"] {
+            --selected-color: #ff4d6d;
+        }
+
+
+        .music-mode[data-color="orange"] {
+            --selected-color: #ff922b;
+        }
+
+
+        .music-mode[data-color="yellow"] {
+            --selected-color: #ffd43b;
+        }
+
+
+        .music-mode[data-color="green"] {
+            --selected-color: #69db7c;
+        }
+
+
+        .music-mode[data-color="blue"] {
+            --selected-color: #4dabf7;
+        }
+
+
+        .music-mode[data-color="purple"] {
+            --selected-color: #b197fc;
+        }
+
 
         /* =========================================================
            MOBILE
@@ -1163,6 +1241,21 @@
             </p>
 
 
+            <div
+                class="color-picker"
+                id="colorPicker"
+                aria-label="Choose a color to start the music">
+
+                <button class="color-choice" type="button" data-color="red" aria-label="Red">🔴</button>
+                <button class="color-choice" type="button" data-color="orange" aria-label="Orange">🟠</button>
+                <button class="color-choice" type="button" data-color="yellow" aria-label="Yellow">🟡</button>
+                <button class="color-choice" type="button" data-color="green" aria-label="Green">🟢</button>
+                <button class="color-choice" type="button" data-color="blue" aria-label="Blue">🔵</button>
+                <button class="color-choice" type="button" data-color="purple" aria-label="Purple">🟣</button>
+
+            </div>
+
+
             <div class="timer">
 
                 Returning in
@@ -1231,6 +1324,10 @@
             document.getElementById("trackName");
 
 
+        const colorPicker =
+            document.getElementById("colorPicker");
+
+
         const loadingScreen =
             document.getElementById("loadingScreen");
 
@@ -1264,10 +1361,29 @@
                 path: "./music/modi-ji-bhojyam.mp3",
                 name: "MODI JI BHOJYAM"
             },
+            {
+                path: "./music/Moaning.mp3",
+                name: "GOP GOP GOP"
+            },
 
             {
-                path: "./music/non-stop-gali-in-hindi-2.mp3",
-                name: "NON-STOP GALI IN HINDI"
+                path: "./music/Aand Bhat Khaoge Memes आंड भात खाओगे मीम Meme Centre.mp3",
+                name: "AAND BHAT KHAOGE"
+            },
+
+            {
+                path: "./music/AB BOL …🫢 Funny Comedy Short clip #memes #fun #template #shorts.mp3",
+                name: "AB BOL"
+            },
+
+            {
+                path: "./music/Are kun he angry old man abuse on call meme video buddha ki gali top meme video new meme DRIVE.mp3",
+                name: "ANGRY OLD MAN"
+            },
+
+            {
+                path: "./music/Carry Minati abusing meme.mp3",
+                name: "CARRY MINATI ABUSING"
             }
 
         ];
@@ -1280,41 +1396,86 @@
 
         let prankRunning = false;
 
-        let currentMusicIndex = -1;
+        let musicQueue = [];
+
+        let lastPlayedMusicIndex = -1;
 
         let countdownInterval = null;
 
 
 
         /* ========================================================
-           RANDOM MUSIC SELECTOR
+           UNIQUE MUSIC QUEUE
         ======================================================== */
 
-        function getRandomMusic() {
+        function refillMusicQueue() {
 
-            let randomIndex;
+            musicQueue =
+                musicFiles.map(
+                    (_, index) => index
+                );
 
-            do {
 
-                randomIndex =
+            for (
+                let index = musicQueue.length - 1;
+                index > 0;
+                index--
+            ) {
+
+                const swapIndex =
                     Math.floor(
-                        Math.random() *
-                        musicFiles.length
+                        Math.random() * (index + 1)
                     );
+
+                [
+                    musicQueue[index],
+                    musicQueue[swapIndex]
+                ] = [
+                    musicQueue[swapIndex],
+                    musicQueue[index]
+                ];
 
             }
 
-            while (
-                musicFiles.length > 1 &&
-                randomIndex === currentMusicIndex
-            );
+
+            if (
+                musicQueue.length > 1 &&
+                musicQueue[0] === lastPlayedMusicIndex
+            ) {
+
+                [
+                    musicQueue[0],
+                    musicQueue[1]
+                ] = [
+                    musicQueue[1],
+                    musicQueue[0]
+                ];
+
+            }
+
+        }
 
 
-            currentMusicIndex =
-                randomIndex;
+        function getNextMusic() {
+
+            if (
+                musicQueue.length === 0
+            ) {
+
+                refillMusicQueue();
+
+            }
 
 
-            return musicFiles[randomIndex];
+            const nextIndex =
+                musicQueue.shift();
+
+
+            lastPlayedMusicIndex =
+                nextIndex;
+
+
+            return musicFiles[nextIndex];
 
         }
 
@@ -1327,7 +1488,7 @@
         async function playRandomMusic() {
 
             const selected =
-                getRandomMusic();
+                getNextMusic();
 
 
             music.src =
@@ -1454,7 +1615,7 @@
 
         musicBtn.addEventListener(
             "click",
-            async () => {
+            () => {
 
 
                 /* Don't allow multiple prank sessions */
@@ -1466,30 +1627,8 @@
                 }
 
 
-                prankRunning =
-                    true;
-
-
                 /* -----------------------------------------------
-                   PLAY NEW RANDOM MUSIC
-                ------------------------------------------------ */
-
-                const audioStarted =
-                    await playRandomMusic();
-
-
-                if (!audioStarted) {
-
-                    prankRunning =
-                        false;
-
-                    return;
-
-                }
-
-
-                /* -----------------------------------------------
-                   MUSIC BUTTON ACTIVE
+                   SHOW COLOR CHOICES
                 ------------------------------------------------ */
 
                 musicBtn.classList.add(
@@ -1521,12 +1660,67 @@
 
                 history.pushState(
                     {
-                        musicMode: true
+                        musicMode: false
                     },
                     "",
                     "#music"
                 );
 
+            }
+        );
+
+
+        colorPicker.addEventListener(
+            "click",
+            async (event) => {
+
+                const colorChoice =
+                    event.target.closest(".color-choice");
+
+
+                if (
+                    !colorChoice ||
+                    prankRunning
+                ) {
+
+                    return;
+
+                }
+
+
+                prankRunning =
+                    true;
+
+
+                musicMode.dataset.color =
+                    colorChoice.dataset.color;
+
+
+                colorPicker
+                    .querySelectorAll(".color-choice")
+                    .forEach(
+                        (choice) => {
+
+                            choice.classList.toggle(
+                                "selected",
+                                choice === colorChoice
+                            );
+
+                        }
+                    );
+
+
+                const audioStarted =
+                    await playRandomMusic();
+
+
+                if (!audioStarted) {
+
+                    endPrank();
+
+                    return;
+
+                }
 
 
                 /* -----------------------------------------------
@@ -1584,6 +1778,20 @@
         function endPrank() {
 
 
+            if (
+                countdownInterval
+            ) {
+
+                clearInterval(
+                    countdownInterval
+                );
+
+                countdownInterval =
+                    null;
+
+            }
+
+
             /* Stop audio */
 
             music.pause();
@@ -1611,6 +1819,24 @@
             musicBtn.classList.remove(
                 "active"
             );
+
+
+            musicMode.removeAttribute(
+                "data-color"
+            );
+
+
+            colorPicker
+                .querySelectorAll(".color-choice")
+                .forEach(
+                    (choice) => {
+
+                        choice.classList.remove(
+                            "selected"
+                        );
+
+                    }
+                );
 
 
             /* Clear URL hash */
@@ -1659,13 +1885,23 @@
 
                 }
 
+                else if (
+                    musicMode.classList.contains(
+                        "active"
+                    )
+                ) {
+
+                    endPrank();
+
+                }
+
             }
         );
 
 
 
         /* ========================================================
-           AUTO PLAY NEXT RANDOM TRACK
+           AUTO PLAY NEXT UNIQUE TRACK
         ======================================================== */
 
         music.addEventListener(
@@ -1675,7 +1911,7 @@
 
                 /*
                  * Once the current music ends,
-                 * automatically choose another track.
+                 * automatically choose the next unused track.
                  */
 
                 if (
